@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="daega.web.mybatis.CommunityMapper"> 
+<!-- Mapper의 패키지까지 정확하게 기술해야 한다. -->
+	
+	<resultMap type="daega.web.community.vo.Community" id="CommunityResultMap">
+		<result property="community_num" column="COMMUNITY_NUM" />
+		<result property="community_writer" column="COMMUNITY_WRITER" />
+		<result property="community_subject" column="COMMUNITY_SUBJECT" />
+		<result property="community_date" column="COMMUNITY_DATE" />
+		<result property="community_readcount" column="COMMUNITY_READCOUNT" />
+		<result property="community_select" column="COMMUNITY_SELECT" />
+		<result property="community_content" column="COMMUNITY_CONTENT" />
+		<result property="community_password" column="COMMUNITY_PASSWORD" />
+		<result property="userinfo_id" column="USERINFO_ID" />
+	</resultMap>
+	
+	<select id="getCommunityList" parameterType="daega.web.page.CommunityCriteria" resultType="daega.web.community.vo.Community">
+		 <!-- SELECT * FROM community ORDER BY community_num DESC -->
+		 <![CDATA[
+  	select * from (
+  	select rownum rn, community_num, community_writer, community_subject, community_date, 
+  	community_readcount, community_select, community_content, community_password, userinfo_id 
+  	from community where rownum <= #{page}*#{perPageNum}) 
+  	where rn > (#{page} -1)*#{perPageNum}
+  	]]>
+	</select>
+	
+	<insert id="insertCommunity" parameterType="daega.web.community.vo.Community" >
+		INSERT INTO community (community_num, community_writer, community_subject, community_date, community_readcount, community_select, community_content, community_password, userinfo_id)
+		values(community_seq.nextval,#{community_writer},#{community_subject},CURRENT_TIMESTAMP,0,#{community_select},#{community_content},#{community_password},#{userinfo_id})
+	</insert>
+	
+	<update id="updateCommunity" parameterType="daega.web.community.vo.Community">
+		<![CDATA[UPDATE community SET community_subject = #{community_subject}, community_date = CURRENT_TIMESTAMP, community_content = #{community_content} WHERE community_num = #{community_num}]]>
+	</update>
+	
+	<select id="checkPassword" resultType="int">
+		SELECT COUNT(*) FROM community WHERE community_num = #{community_num} AND community_password = #{community_password}
+	</select>
+	
+	<select id="countBoardList" resultType="int">
+		SELECT count(*) FROM community
+	</select>
+	
+	<select id="getCommunity" resultType="daega.web.community.vo.Community" parameterType="int">
+		SELECT * FROM community WHERE community_num = #{community_num}
+	</select>
+	
+	<update id="updateCountCommunity">
+		UPDATE community SET community_readcount = community_readcount+1 WHERE community_num = #{community_num}
+	</update>
+	
+	<delete id="deleteCommunity" parameterType="int">
+		DELETE community WHERE community_num = #{community_num}
+	</delete>
+
+</mapper>

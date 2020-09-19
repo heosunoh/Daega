@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="daega.web.mybatis.CommunityCommentMapper"> 
+<!-- Mapper의 패키지까지 정확하게 기술해야 한다. -->
+	
+	<resultMap type="daega.web.community.vo.CommunityComment" id="CommunityCommentResultMap">
+		<result property="community_num" column="COMMUNITY_NUM" />
+		<result property="communityComment_num" column="COMMUNITYCOMMENT_NUM" />
+		<result property="communityComment_writer" column="COMMUNITYCOMMENT_WRITER" />
+		<result property="communityComment_date" column="COMMUNITYCOMMENT_DATE" />
+		<result property="communityComment_content" column="COMMUNITYCOMMENT_CONTENT" />
+		<result property="userinfo_id" column="USERINFO_ID" />
+	</resultMap>
+	
+	<select id="getCommunityCommentList" resultType="daega.web.community.vo.CommunityComment">
+  	select * from COMMUNITYCOMMENT WHERE community_num = #{community_num} ORDER BY community_num DESC
+	</select>
+	
+	<insert id="insertCommunityComment" parameterType="daega.web.community.vo.CommunityComment" >
+		INSERT INTO communityComment (community_num, communityComment_num, communityComment_writer, communityComment_date, communityComment_content, userinfo_id)
+		values(#{community_num},communityComment_seq.nextval,#{communityComment_writer},CURRENT_TIMESTAMP,#{communityComment_content},#{userinfo_id})
+	</insert>
+	
+	<update id="updateCommunityComment" parameterType="daega.web.community.vo.CommunityComment">
+		<![CDATA[UPDATE community SET community_date = CURRENT_TIMESTAMP, community_content = #{community_content} WHERE community_num = #{community_num}]]>
+	</update>
+	
+	<select id="checkPassword" resultType="int">
+		SELECT COUNT(*) FROM community WHERE community_num = #{community_num} AND community_password = #{community_password}
+	</select>
+	
+	<select id="getCommunity" resultType="daega.web.community.vo.Community" parameterType="int">
+		SELECT * FROM community WHERE community_num = #{community_num}
+	</select>
+	
+	<update id="updateCountCommunity">
+		UPDATE community SET community_readcount = community_readcount+1 WHERE community_num = #{community_num}
+	</update>
+	
+	<delete id="deleteCommunityComment" parameterType="int">
+		DELETE communityComment WHERE communityComment_num = #{communityComment_num}
+	</delete>
+
+</mapper>

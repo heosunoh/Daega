@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="daega.web.mybatis.UserMapper"> 
+<!-- Mapper의 패키지까지 정확하게 기술해야 한다. -->
+	
+	<resultMap type="daega.web.user.vo.User" id="UserResultMap">
+		<result property="userinfo_id" column="USERINFO_ID" />
+		<result property="userinfo_password" column="USERINFO_PASSWORD" />
+		<result property="userinfo_name" column="USERINFO_NAME" />
+		<result property="userinfo_nickname" column="USERINFO_NICKNAME" />
+		<result property="userinfo_email" column="USERINFO_EMAIL" />
+		<result property="userinfo_grade" column="USERINFO_GRADE" />
+		<result property="userinfo_auth" column="USERINFO_AUTH" />
+	</resultMap>
+	<!-- id의 경우에는 Mapper.java에 동일하게 사용해야된다. resultMap="MemberResultMap" -->
+	<select id="getUers" resultType="user">
+		SELECT * FROM userinfo
+	</select>
+	<select id="selectUser" resultType="daega.web.user.vo.User" parameterType="String">
+		SELECT * FROM userinfo WHERE userinfo_id = #{userinfo_id} AND userinfo_password = #{userinfo_password}
+	</select>
+	<select id="selectByEmail" resultType="daega.web.user.vo.User">
+		SELECT userinfo_email, userinfo_name FROM userinfo WHERE userinfo_email = #{userinfo_email}
+	</select>
+	<select id="selectById" resultType="daega.web.user.vo.User">
+		SELECT userinfo_id, userinfo_name FROM userinfo WHERE userinfo_id = #{userinfo_id}
+	</select>
+	<select id="selectByNickname" resultType="daega.web.user.vo.User">
+		SELECT userinfo_nickname, userinfo_name FROM userinfo WHERE userinfo_nickname = #{userinfo_nickname}
+	</select>
+	
+	<select id="loginCheck" resultType="String">
+		SELECT userinfo_name FROM userinfo WHERE userinfo_id = #{userinfo_id} AND userinfo_password = #{userinfo_password}
+	</select>
+	<select id="viewUser" resultType="daega.web.user.vo.User">
+		SELECT * FROM userinfo WHERE userinfo_id = #{userinfo_id} AND userinfo_password = #{userinfo_password}
+	</select>
+	<select id="getUpdateUser" resultType="user"
+	parameterType="int">
+		SELECT * FROM userinfo WHERE userinfo_id = #{userinfo_id}
+	</select>
+	
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+	<insert id="insertUser" parameterType="daega.web.user.vo.User" >
+		INSERT INTO userinfo values(#{userinfo_id},#{userinfo_password},#{userinfo_name},#{userinfo_nickname},#{userinfo_email},#{userinfo_grade},'user')
+	</insert>
+	
+	<!-- update는 생략한다. -->
+	<update id="updateUser" parameterType="daega.web.user.vo.User">
+		UPDATE userinfo SET userinfo_id = #{userinfo_id}, userinfo_password = #{userinfo_password}, userinfo_name = #{userinfo_name}, userinfo_nickname = #{userinfo_nickname}, userinfo_grade = #{userinfo_grade}
+		WHERE userinfo_id=#{userinfo_id}
+	</update>
+	
+	<delete id="deleteUser" parameterType="int">
+		DELETE userinfo WHERE userinfo_id=#{userinfo_id}
+	</delete>
+
+</mapper>
